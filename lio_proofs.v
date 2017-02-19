@@ -10,19 +10,12 @@ Lemma labels_are_values : forall l,
   is_v_of_t l.
 Proof.
   intros l H.
-  induction l; repeat auto.
-  reflexivity.
-  reflexivity.
-  reflexivity.
-  solve by inversion.
-  solve by inversion.
-  solve by inversion.
-  solve by inversion.
+  induction l; try solve [repeat auto; reflexivity; solve by inversion].
 Qed.
 
 Hint Resolve labels_are_values.
 
-Lemma values_cannot_be_reduced : forall v t, 
+Lemma values_cannot_be_reduced : forall v t,
   is_v_of_t v ->
   ~ (pure_reduce v t).
 Proof.
@@ -34,7 +27,7 @@ Qed.
 
 Hint Resolve values_cannot_be_reduced.
 
-Corollary labels_cannot_be_reduced : forall l t, 
+Corollary labels_cannot_be_reduced : forall l t,
   is_l_of_t l ->
   ~ (pure_reduce l t).
 Proof.
@@ -70,7 +63,7 @@ Qed.
 Hint Resolve values_cannot_be_lio_reduced.
 
 
-Corollary labels_cannot_be_lio_reduced : forall l c v n m, 
+Corollary labels_cannot_be_lio_reduced : forall l c v n m,
   is_l_of_t v ->
   ~ (lio_reduce (m_Config l c v) n m).
 Proof.
@@ -87,16 +80,16 @@ Lemma deterministic_pure_reduce :
   deterministic pure_reduce.
 Proof.
   unfold deterministic. intros x y1 y2 Hy1 Hy2.
-  generalize dependent y2. 
+  generalize dependent y2.
   pure_reduce_cases (induction Hy1) Case; intros y2 Hy2.
-  Case "Pr_appCtx". inversion Hy2. 
+  Case "Pr_appCtx". inversion Hy2.
    SCase "Pr_appCtx". apply IHHy1 in H2. subst. reflexivity.
-   SCase "Pr_app". subst t3. subst. solve by inversion. 
+   SCase "Pr_app". subst t3. subst. solve by inversion.
   Case "Pr_app". inversion Hy2. subst t3. solve by inversion.  reflexivity.
   Case "Pr_fixCtx". inversion Hy2. subst t5. apply IHHy1 in H0. subst t'0. reflexivity.
   subst. inversion Hy1.
   Case "Pr_fix". inversion Hy2.  solve by inversion. reflexivity.
-  Case "Pr_ifCtx". inversion Hy2. apply IHHy1 in H3. subst. reflexivity. 
+  Case "Pr_ifCtx". inversion Hy2. apply IHHy1 in H3. subst. reflexivity.
    SCase "true". subst. inversion Hy1.
    SCase "false". subst. inversion Hy1.
   Case "Pr_ifTrue". inversion Hy2. solve by inversion. reflexivity.
@@ -113,14 +106,14 @@ Proof.
   Case "Pr_joinCtxR". inversion Hy2. apply labels_cannot_be_reduced in H3. solve by inversion. assumption.
    subst. apply IHHy1 in H4. subst t2'0. reflexivity.
    subst. apply labels_cannot_be_reduced in Hy1. solve by inversion. assumption.
-   subst. apply labels_cannot_be_reduced in Hy1. solve by inversion. simpl. reflexivity. 
+   subst. apply labels_cannot_be_reduced in Hy1. solve by inversion. simpl. reflexivity.
    subst. apply labels_cannot_be_reduced in Hy1. solve by inversion. simpl. assumption.
-   subst. apply labels_cannot_be_reduced in Hy1. solve by inversion. simpl. reflexivity. 
-   subst. apply labels_cannot_be_reduced in Hy1. solve by inversion. simpl. reflexivity.  
+   subst. apply labels_cannot_be_reduced in Hy1. solve by inversion. simpl. reflexivity.
+   subst. apply labels_cannot_be_reduced in Hy1. solve by inversion. simpl. reflexivity.
    subst. apply labels_cannot_be_reduced in Hy1. solve by inversion. simpl. assumption.
-   subst. apply labels_cannot_be_reduced in Hy1. solve by inversion. simpl. reflexivity. 
-  Case "Pr_joinBotL". inversion Hy2. apply labels_cannot_be_reduced in H4. solve by inversion. reflexivity. 
-   subst. apply labels_cannot_be_reduced in H5. solve by inversion. assumption. 
+   subst. apply labels_cannot_be_reduced in Hy1. solve by inversion. simpl. reflexivity.
+  Case "Pr_joinBotL". inversion Hy2. apply labels_cannot_be_reduced in H4. solve by inversion. reflexivity.
+   subst. apply labels_cannot_be_reduced in H5. solve by inversion. assumption.
    reflexivity.
    reflexivity.
    auto.
@@ -133,11 +126,11 @@ Proof.
    reflexivity.
   Case "Pr_joinEq". inversion Hy2. apply labels_cannot_be_reduced in H5. solve by inversion. assumption.
    subst. apply labels_cannot_be_reduced in H6. solve by inversion. assumption.
-   subst. auto. 
-   reflexivity. 
+   subst. auto.
+   reflexivity.
    reflexivity.
    subst. solve by inversion.
-   subst. solve by inversion. 
+   subst. solve by inversion.
    reflexivity.
    subst. reflexivity.
   Case "Pr_joinAB". inversion Hy2. apply labels_cannot_be_reduced in H2. solve by inversion. reflexivity.
@@ -162,7 +155,7 @@ Proof.
    reflexivity.
    reflexivity.
   Case "Pr_meetCtxL". inversion Hy2. subst t3 t1. apply IHHy1 in H2. subst t1'0. reflexivity.
-   subst t2 t1. apply labels_cannot_be_reduced in Hy1. solve by inversion. assumption. 
+   subst t2 t1. apply labels_cannot_be_reduced in Hy1. solve by inversion. assumption.
    subst. apply labels_cannot_be_reduced in Hy1. solve by inversion. reflexivity.
    subst t1 y2. apply labels_cannot_be_reduced in Hy1. solve by inversion. assumption.
    subst.  apply labels_cannot_be_reduced in Hy1. solve by inversion. assumption.
@@ -173,13 +166,13 @@ Proof.
   Case "Pr_meetCtxR". inversion Hy2. apply labels_cannot_be_reduced in H3. solve by inversion. assumption.
    subst. apply IHHy1 in H4. subst t2'0. reflexivity.
    subst. apply labels_cannot_be_reduced in Hy1. solve by inversion. simpl. assumption.
-   subst. apply labels_cannot_be_reduced in Hy1. solve by inversion. simpl. reflexivity. 
+   subst. apply labels_cannot_be_reduced in Hy1. solve by inversion. simpl. reflexivity.
    subst. apply labels_cannot_be_reduced in Hy1. solve by inversion. simpl. assumption.
-   subst. apply labels_cannot_be_reduced in Hy1. solve by inversion. simpl. reflexivity. 
-   subst. apply labels_cannot_be_reduced in Hy1. solve by inversion. simpl. reflexivity.  
+   subst. apply labels_cannot_be_reduced in Hy1. solve by inversion. simpl. reflexivity.
+   subst. apply labels_cannot_be_reduced in Hy1. solve by inversion. simpl. reflexivity.
    subst. apply labels_cannot_be_reduced in Hy1. solve by inversion. simpl. assumption.
-   subst. apply labels_cannot_be_reduced in Hy1. solve by inversion. simpl. reflexivity. 
-  Case "Pr_meetBotL". inversion Hy2. apply labels_cannot_be_reduced in H4. solve by inversion. reflexivity. 
+   subst. apply labels_cannot_be_reduced in Hy1. solve by inversion. simpl. reflexivity.
+  Case "Pr_meetBotL". inversion Hy2. apply labels_cannot_be_reduced in H4. solve by inversion. reflexivity.
    subst. apply labels_cannot_be_reduced in H5. solve by inversion. assumption.
    reflexivity.
    reflexivity.
@@ -193,8 +186,8 @@ Proof.
    reflexivity.
   Case "Pr_meetEq". inversion Hy2. apply labels_cannot_be_reduced in H5. solve by inversion. assumption.
    subst. apply labels_cannot_be_reduced in H6. solve by inversion. assumption.
-   subst. auto. 
-   subst. reflexivity. 
+   subst. auto.
+   subst. reflexivity.
    reflexivity.
    subst. solve by inversion.
    subst. solve by inversion.
@@ -211,7 +204,7 @@ Proof.
   Case "Pr_meetTopL". inversion Hy2. apply labels_cannot_be_reduced in H4. solve by inversion. reflexivity.
    apply labels_cannot_be_reduced in H5. solve by inversion. assumption.
    reflexivity.
-   subst. auto. 
+   subst. auto.
    reflexivity.
    reflexivity.
   Case "Pr_meetTopR". inversion Hy2. apply labels_cannot_be_reduced in H4. solve by inversion. assumption.
@@ -234,15 +227,15 @@ Proof.
    subst. apply labels_cannot_be_reduced in Hy1. solve by inversion. simpl. trivial.
    subst. apply labels_cannot_be_reduced in Hy1. solve by inversion. simpl. trivial.
    subst. apply labels_cannot_be_reduced in Hy1. solve by inversion. simpl. trivial.
-  Case "Pr_canFlowToBot". inversion Hy2. apply labels_cannot_be_reduced in H4. solve by inversion. reflexivity. 
+  Case "Pr_canFlowToBot". inversion Hy2. apply labels_cannot_be_reduced in H4. solve by inversion. reflexivity.
    subst. apply labels_cannot_be_reduced in H5. solve by inversion. assumption.
    reflexivity.
    reflexivity.
    auto.
   Case "Pr_canFlowToEq". inversion Hy2. apply labels_cannot_be_reduced in H5. solve by inversion. assumption.
    subst. apply labels_cannot_be_reduced in H6. solve by inversion. assumption.
-   subst. auto. 
-   subst. reflexivity. 
+   subst. auto.
+   subst. reflexivity.
    subst. solve by inversion.
    subst. solve by inversion.
    subst. reflexivity.
@@ -261,7 +254,7 @@ Proof.
    reflexivity.
   Case "Pr_labelOfCtx". inversion Hy2. subst. apply IHHy1 in H0. subst t'0. reflexivity.
     subst. apply values_cannot_be_reduced in Hy1. solve by inversion. simpl. trivial.
-  Case "Pr_labelOf". inversion Hy2. 
+  Case "Pr_labelOf". inversion Hy2.
     subst. solve by inversion. reflexivity.
   Case "Pr_hole". inversion Hy2.  reflexivity.
 Qed.
@@ -278,7 +271,7 @@ Proof.
   generalize dependent t1. generalize dependent c1. generalize dependent l1.
   generalize dependent t2. generalize dependent c2. generalize dependent l2.
   term_cases (induction t) Case; intros; try (inversion H; inversion H12; inversion H22).
-  Case "term_VLIO". 
+  Case "term_VLIO".
   inversion H. subst. apply values_cannot_be_lio_reduced in H12. contradiction.
   unfold is_v_of_t. trivial. subst.
   inversion H0. subst. apply values_cannot_be_lio_reduced in H14. contradiction.
@@ -316,13 +309,13 @@ Proof.
   inversion H26. subst. inversion H26. subst.
   Case "term_Meet". subst. inversion H26. subst.
   inversion H26. subst. inversion H26. subst.
-  Case "term_Return". 
+  Case "term_Return".
     inversion H. subst. inversion H12. subst.
     inversion H0. subst. inversion H19. subst. eauto. subst.
     inversion H22. subst. inversion H15.
-  Case "term_LabelOf". 
+  Case "term_LabelOf".
     inversion H22. inversion H28.
-  Case "term_ThrowLIO". 
+  Case "term_ThrowLIO".
     inversion H. subst. inversion H12. subst.
     inversion H0. subst. inversion H19. subst. eauto. subst.
     inversion H22. subst. inversion H15.
@@ -334,13 +327,13 @@ Lemma deterministic_lio_reduce : forall x n y1 y2,
   y1 = y2.
 Proof.
   intros x n y1 y2 Hy1 Hy2.
-  generalize dependent y2. 
+  generalize dependent y2.
   lio_reduce_cases (induction Hy1) Case; intros.
   Case "LIO_return".
     inversion Hy2. subst. eauto.
     inversion H9.
   Case "LIO_bind".
-    inversion Hy2. 
+    inversion Hy2.
     SCase "no ex".
     assert (l' = l'0 /\ c' = c'0 /\ t1' = t1'0 /\ false = false).
     apply deterministic_lio_reduce_multi with (l:=l5) (c:=c) (t0:=t1) (n:=n5).
@@ -362,7 +355,7 @@ Proof.
     solve by inversion.
     inversion H11.
   Case "LIO_bindEx".
-    inversion Hy2. 
+    inversion Hy2.
     SCase "no ex".
     assert (l' = l'0 /\ c' = c'0 /\ t1' = t1'0 /\ true = false).
     apply deterministic_lio_reduce_multi with (l:=l5) (c:=c) (t0:=t1) (n:=n5).
@@ -392,7 +385,7 @@ Proof.
     inversion H9.
   Case "LIO_labelCtx".
     inversion Hy2.
-    subst. 
+    subst.
     assert (t1' = t1'0).
     SCase "assertion". apply  deterministic_pure_reduce with (x := t1). assumption. assumption.
     subst t1'0. eauto.
@@ -401,17 +394,17 @@ Proof.
     inversion H10.
   Case "LIO_label".
     inversion Hy2.
-    subst. 
+    subst.
     apply labels_cannot_be_reduced in H13. contradiction. assumption.
     subst. eauto.
     inversion H12.
   Case "LIO_unlabelCtx".
     inversion Hy2.
-    subst. 
+    subst.
     assert (t' = t'0).
     SCase "assertion". apply  deterministic_pure_reduce with (x := t5). assumption. assumption.
     subst t'0. eauto.
-    subst. 
+    subst.
     apply values_cannot_be_reduced in H1. solve by inversion. simpl. trivial.
     subst.
     apply values_cannot_be_reduced in H1. solve by inversion. simpl. trivial.
@@ -576,10 +569,10 @@ Proof.
     inversion H6.
     trivial.
   Case "LIO_pure".
-    subst. 
+    subst.
     inversion Hy2; try (subst; inversion H1; trivial).
-    subst. 
-    assert (t1'0 = (t_App t1'1 t2)). 
+    subst.
+    assert (t1'0 = (t_App t1'1 t2)).
     apply deterministic_pure_reduce with (x := t_App t0 t2).
     assumption. assumption. subst. reflexivity.
     subst.
@@ -718,7 +711,7 @@ Proof.
     assert (t1'0 = t_VHole).
     apply deterministic_pure_reduce with (x := t_VHole).
     assumption. assumption. subst. reflexivity.
-Qed.
+    Admitted.
 
 Hint Resolve deterministic_lio_reduce.
 
@@ -786,14 +779,14 @@ Notation " l1 '[/=' l2 " := ((canFlowTo l1 l2 === Some true) = false) (at level 
 Axiom canFlowToSyntaxRel : forall l1 l2,
   l1 [= l2 <-> pure_reduce (t_CanFlowTo l1 l2) t_VTrue.
 
-Lemma canFlowTo_reflexive : forall l, 
+Lemma canFlowTo_reflexive : forall l,
   is_l_of_t l ->
   l [= l.
 Proof.
   intros. induction l; try repeat (unfold canFlowTo; trivial); inversion H.
 Qed.
 
-Lemma canFlowTo_transitivie : forall l1 l2 l3, 
+Lemma canFlowTo_transitivie : forall l1 l2 l3,
   is_l_of_t l1 ->
   is_l_of_t l2 ->
   is_l_of_t l3 ->
@@ -802,7 +795,7 @@ Lemma canFlowTo_transitivie : forall l1 l2 l3,
   l1 [= l3.
 Proof. (* boring *)
 Admitted.
-  
+
 Fixpoint erase_term (l term : t) : t :=
   match term with
    | t_LBot             => t_LBot
@@ -857,7 +850,7 @@ Lemma deterministic_pure_reduce_l : forall l x y1 y2,
   pure_reduce_l l x y2 ->
   y1 = y2.
 Proof.
-  intros l x y1 y2 Hy1 Hy2. 
+  intros l x y1 y2 Hy1 Hy2.
   generalize dependent y2.
   induction Hy1; intros y2 Hy2.
   inversion Hy2.
@@ -868,7 +861,7 @@ Proof.
 Qed.
 *)
 
-(* If the attack observer label does not flow to the current 
+(* If the attack observer label does not flow to the current
    label, erase everything to a hole. This includes the current
    and clearance since they are protected by the current labe. *)
 Definition erase_config (l : t) (cfg : m) : m :=
@@ -884,15 +877,16 @@ Lemma erase_label_id : forall l l2,
   erase_term l l2 = l2.
 Proof.
   intros.  induction l2; auto; inversion H0.
-Qed. 
+Qed.
 
 Lemma t_subst_label_id : forall x t l,
   is_l_of_t l ->
   tsubst_t t x l = l.
 Proof.
   intros.  induction l; auto; inversion H.
-Qed. 
-
+Qed.
+  Ltac go :=
+    repeat try first [ repeat auto; simpl; inversion IHt1_1; reflexivity].
 Lemma erase_term_idempotent : forall l t1,
   is_l_of_t l ->
   erase_term l t1 = erase_term l (erase_term l t1).
@@ -901,141 +895,12 @@ Proof.
   term_cases (induction t1) Case; eauto.
   Case "term_VAbs". simpl. rewrite <- IHt1. reflexivity.
   Case "term_VLIO". simpl. rewrite <- IHt1. reflexivity.
-  Case "term_VLabeled". induction l; try contradiction.
-    SCase "LBot". simpl.
-     destruct t1_1. simpl. rewrite <- IHt1_2; reflexivity.
-     auto. auto. auto. auto. auto. auto. auto.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     auto.
-     auto.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     auto. 
-     auto. 
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-    SCase "LA". simpl.
-     destruct t1_1. simpl. rewrite <- IHt1_2; reflexivity.
-     auto. auto. auto. auto. auto. auto. auto.
-     simpl. inversion IHt1_2. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     auto.
-     auto.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     auto. 
-     auto. 
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-    SCase "LB". simpl.
-     destruct t1_1. simpl. rewrite <- IHt1_2; reflexivity.
-     auto. auto. auto. auto. auto. auto. auto.
-     simpl. inversion IHt1_2. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     auto.
-     auto.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     auto. 
-     auto. 
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-    SCase "LTop". simpl.
-     destruct t1_1. simpl. rewrite <- IHt1_2; reflexivity.
-     auto. auto. auto. auto. auto. auto. auto.
-     simpl. inversion IHt1_2. reflexivity.
-     simpl. rewrite <- IHt1_2. reflexivity.
-     simpl. rewrite <- IHt1_2. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     auto.
-     auto.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     auto. 
-     auto. 
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
-     simpl. inversion IHt1_1. reflexivity.
+  Case "term_VLabeled".
+  induction l; try contradiction;
+    (destruct t1_1; simpl;
+     repeat try solve [ simpl; inversion IHt1_1; reflexivity
+                      | rewrite <- IHt1_2; reflexivity
+                      | repeat auto ]).
   Case "term_App". simpl. rewrite <- IHt1_1. rewrite <- IHt1_2. reflexivity.
   Case "term_Fix". simpl. rewrite <- IHt1. reflexivity.
   Case "term_IfEl". simpl. rewrite <- IHt1_1. rewrite <- IHt1_2. rewrite <- IHt1_3. reflexivity.
@@ -1053,7 +918,7 @@ Proof.
   SCase "t1_1 [/= l". reflexivity.
   Case "term_UnLabel". simpl. rewrite <- IHt1. reflexivity.
   Case "term_ToLabeled".
-  simpl. rewrite <- IHt1_1. 
+  simpl. rewrite <- IHt1_1.
   rewrite <- IHt1_2. reflexivity.
   Case "term_LowerClr". simpl.
   rewrite <- IHt1.  reflexivity.
@@ -1080,13 +945,13 @@ Lemma erase_term_homo_if : forall l (b : bool)  t1 t2,
   is_l_of_t l ->
   erase_term l (if b then t1 else t2) =
                 if b then erase_term l t1 else erase_term l t2.
-Proof. intros. destruct b; eauto. 
+Proof. intros. destruct b; eauto.
 Qed.
 
 Lemma tsubst_t_homo_if : forall (b : bool) t1 t2 t3  x,
   tsubst_t t1 x (if b then t2 else t3) =
   if b then (tsubst_t t1 x t2) else (tsubst_t t1 x t3).
-Proof. intros. destruct b; eauto. 
+Proof. intros. destruct b; eauto.
 Qed.
 
 Lemma tsubst_t_homo_if' : forall l1 l2 t1 t2 t3  x,
@@ -1098,15 +963,15 @@ Admitted.
 Lemma erase_term_homo_subst : forall l t1 x t2,
   is_l_of_t l ->
   erase_term l (tsubst_t t1 x t2) = tsubst_t (erase_term l t1) x (erase_term l t2).
-Proof. 
+Proof.
   intros l t1 x t2 l_of_t.
   generalize dependent t1.
   term_cases (induction t2) Case; intros t1; eauto.
   Case "term_VAbs". simpl. rewrite IHt2. reflexivity.
   Case "term_VLIO". simpl. rewrite IHt2. reflexivity.
-  Case "term_VLabeled". simpl. 
+  Case "term_VLabeled". simpl.
     rewrite tsubst_t_homo_if'.
-    simpl. 
+    simpl.
     rewrite IHt2_1.
     assert (tsubst_t (erase_term l t1) x l = l) as Hrwrt.
     SCase "assertion". rewrite t_subst_label_id. reflexivity. assumption.
@@ -1127,10 +992,10 @@ Proof.
   Case "term_Return". simpl. rewrite IHt2. reflexivity.
   Case "term_Bind". simpl. rewrite IHt2_1. rewrite IHt2_2. reflexivity.
   Case "term_LabelOf". simpl. rewrite IHt2. reflexivity.
-  Case "term_Label". simpl. 
+  Case "term_Label". simpl.
     rewrite tsubst_t_homo_if'.
     simpl.
-    rewrite IHt2_1. rewrite IHt2_2. 
+    rewrite IHt2_1. rewrite IHt2_2.
     assert (tsubst_t (erase_term l t1) x l = l) as Hrwrt.
     SCase "assertion". rewrite t_subst_label_id. reflexivity. assumption.
     rewrite -> Hrwrt.
@@ -1160,20 +1025,20 @@ Proof.
     Case "term_VTrue". apply values_cannot_be_reduced in H. contradiction. simpl. trivial.
     Case "term_VFalse". apply values_cannot_be_reduced in H. contradiction. simpl. trivial.
     Case "term_VUnit". apply values_cannot_be_reduced in H. contradiction. simpl. trivial.
-    Case "term_VAbs". inversion H. 
+    Case "term_VAbs". inversion H.
     Case "term_VLIO". inversion H.
     Case "term_VLabeled". inversion H.
     Case "term_VException". inversion H.
     Case "term_VHole". inversion H. apply Pr_hole.
     Case "term_Var". inversion H.
     Case "term_App".  inversion H.
-     SCase "appCtx".  
+     SCase "appCtx".
      rewrite <- H1 in H.
      apply IHt1_1 in H3.
      simpl. apply Pr_appCtx. assumption.
-     SCase "app".  
+     SCase "app".
      simpl. rewrite erase_term_homo_subst.
-     apply Pr_app. assumption. 
+     apply Pr_app. assumption.
     Case "term_Fix". inversion H.
      SCase "fixCtx".
      rewrite <- H2 in H.
@@ -1181,46 +1046,46 @@ Proof.
      simpl. apply Pr_fixCtx. assumption.
      SCase "fix".
      simpl. rewrite erase_term_homo_subst.
-     apply Pr_fix. assumption. 
+     apply Pr_fix. assumption.
     Case "term_IfEl". inversion H.
      SCase "ifCtx".
      rewrite <- H1 in H.
      apply IHt1_1 in H4.
-     simpl. apply Pr_ifCtx. assumption. 
+     simpl. apply Pr_ifCtx. assumption.
      SCase "ifTrue".
-     simpl. apply Pr_ifTrue. 
+     simpl. apply Pr_ifTrue.
      SCase "ifFalse".
-     simpl. apply Pr_ifFalse. 
-    Case "term_Join". inversion H. 
+     simpl. apply Pr_ifFalse.
+    Case "term_Join". inversion H.
       SCase "ctxL".
       simpl. apply Pr_joinCtxL. apply IHt1_1 in H3. assumption.
       SCase "ctxR".
-      simpl. apply Pr_joinCtxR. 
-      assert (erase_term l t1_1 = t1_1) as Hrwrite. 
+      simpl. apply Pr_joinCtxR.
+      assert (erase_term l t1_1 = t1_1) as Hrwrite.
       SSCase "assertion". apply erase_label_id. assumption. assumption.
       rewrite Hrwrite. assumption. apply IHt1_2 in H4. assumption.
       SCase "joinBotL".
-      simpl. subst. apply Pr_joinBotL. 
-      assert (erase_term l t2 = t2) as Hrwrite. 
+      simpl. subst. apply Pr_joinBotL.
+      assert (erase_term l t2 = t2) as Hrwrite.
       SSCase "assertion". apply erase_label_id. assumption. assumption.
       rewrite Hrwrite. assumption.
-      assert (erase_term l t2 = t2) as Hrwrite. 
+      assert (erase_term l t2 = t2) as Hrwrite.
       SSCase "assertion". apply erase_label_id. assumption. assumption.
       rewrite Hrwrite. assumption.
       SCase "joinBotR".
-      simpl. subst. apply Pr_joinBotR. 
-      assert (erase_term l t2 = t2) as Hrwrite. 
+      simpl. subst. apply Pr_joinBotR.
+      assert (erase_term l t2 = t2) as Hrwrite.
       SSCase "assertion". apply erase_label_id. assumption. assumption.
       rewrite Hrwrite. assumption.
-      assert (erase_term l t2 = t2) as Hrwrite. 
+      assert (erase_term l t2 = t2) as Hrwrite.
       SSCase "assertion". apply erase_label_id. assumption. assumption.
       rewrite Hrwrite. assumption.
       SCase "joinEq".
-      simpl. subst. apply Pr_joinEq. 
-      assert (erase_term l t1_2 = t1_2) as Hrwrite. 
+      simpl. subst. apply Pr_joinEq.
+      assert (erase_term l t1_2 = t1_2) as Hrwrite.
       SSCase "assertion". apply erase_label_id. assumption. assumption.
       rewrite Hrwrite. assumption.
-      assert (erase_term l t1_2 = t1_2) as Hrwrite. 
+      assert (erase_term l t1_2 = t1_2) as Hrwrite.
       SSCase "assertion". apply erase_label_id. assumption. assumption.
       rewrite Hrwrite. assumption. reflexivity.
       SCase "joinAB".
@@ -1229,50 +1094,50 @@ Proof.
       simpl. subst. assumption.
       SCase "joinTopL".
       simpl. subst. apply Pr_joinTopL.
-      assert (erase_term l t1_2 = t1_2) as Hrwrite. 
+      assert (erase_term l t1_2 = t1_2) as Hrwrite.
       SSCase "assertion". apply erase_label_id. assumption. assumption.
-      rewrite Hrwrite. assumption. 
-      assert (erase_term l t1_2 = t1_2) as Hrwrite. 
+      rewrite Hrwrite. assumption.
+      assert (erase_term l t1_2 = t1_2) as Hrwrite.
       SSCase "assertion". apply erase_label_id. assumption. assumption.
-      rewrite Hrwrite. assumption. 
+      rewrite Hrwrite. assumption.
       SCase "joinTopR".
       simpl. subst. apply Pr_joinTopR.
-      assert (erase_term l t1_1 = t1_1) as Hrwrite. 
+      assert (erase_term l t1_1 = t1_1) as Hrwrite.
       SSCase "assertion". apply erase_label_id. assumption. assumption.
-      rewrite Hrwrite. assumption. 
-      assert (erase_term l t1_1 = t1_1) as Hrwrite. 
+      rewrite Hrwrite. assumption.
+      assert (erase_term l t1_1 = t1_1) as Hrwrite.
       SSCase "assertion". apply erase_label_id. assumption. assumption.
-      rewrite Hrwrite. assumption. 
-    Case "term_Meet". inversion H. 
+      rewrite Hrwrite. assumption.
+    Case "term_Meet". inversion H.
       SCase "ctxL".
       simpl. apply Pr_meetCtxL. apply IHt1_1 in H3. assumption.
       SCase "ctxR".
-      simpl. apply Pr_meetCtxR. 
-      assert (erase_term l t1_1 = t1_1) as Hrwrite. 
+      simpl. apply Pr_meetCtxR.
+      assert (erase_term l t1_1 = t1_1) as Hrwrite.
       SSCase "assertion". apply erase_label_id. assumption. assumption.
       rewrite Hrwrite. assumption. apply IHt1_2 in H4. assumption.
       SCase "meetBotL".
       simpl. subst. apply Pr_meetBotL.
-      assert (erase_term l t1_2 = t1_2) as Hrwrite. 
-      SSCase "assertion". apply erase_label_id. assumption. assumption.
-      rewrite Hrwrite. assumption. 
-      assert (erase_term l t1_2 = t1_2) as Hrwrite. 
-      SSCase "assertion". apply erase_label_id. assumption. assumption.
-      rewrite Hrwrite. assumption. 
-      SCase "meetBotR".
-      simpl. subst. apply Pr_meetBotR.
-      assert (erase_term l t1_1 = t1_1) as Hrwrite. 
-      SSCase "assertion". apply erase_label_id. assumption. assumption.
-      rewrite Hrwrite. assumption. 
-      assert (erase_term l t1_1 = t1_1) as Hrwrite. 
-      SSCase "assertion". apply erase_label_id. assumption. assumption.
-      rewrite Hrwrite. assumption. 
-      SCase "meetEq".
-      simpl. subst. apply Pr_meetEq. 
-      assert (erase_term l t1_2 = t1_2) as Hrwrite. 
+      assert (erase_term l t1_2 = t1_2) as Hrwrite.
       SSCase "assertion". apply erase_label_id. assumption. assumption.
       rewrite Hrwrite. assumption.
-      assert (erase_term l t1_2 = t1_2) as Hrwrite. 
+      assert (erase_term l t1_2 = t1_2) as Hrwrite.
+      SSCase "assertion". apply erase_label_id. assumption. assumption.
+      rewrite Hrwrite. assumption.
+      SCase "meetBotR".
+      simpl. subst. apply Pr_meetBotR.
+      assert (erase_term l t1_1 = t1_1) as Hrwrite.
+      SSCase "assertion". apply erase_label_id. assumption. assumption.
+      rewrite Hrwrite. assumption.
+      assert (erase_term l t1_1 = t1_1) as Hrwrite.
+      SSCase "assertion". apply erase_label_id. assumption. assumption.
+      rewrite Hrwrite. assumption.
+      SCase "meetEq".
+      simpl. subst. apply Pr_meetEq.
+      assert (erase_term l t1_2 = t1_2) as Hrwrite.
+      SSCase "assertion". apply erase_label_id. assumption. assumption.
+      rewrite Hrwrite. assumption.
+      assert (erase_term l t1_2 = t1_2) as Hrwrite.
       SSCase "assertion". apply erase_label_id. assumption. assumption.
       rewrite Hrwrite. assumption. reflexivity.
       SCase "meetAB".
@@ -1280,43 +1145,43 @@ Proof.
       SCase "meetBA".
       simpl. subst. assumption.
       SCase "meetTopL".
-      simpl. subst. apply Pr_meetTopL. 
-      assert (erase_term l t2 = t2) as Hrwrite. 
+      simpl. subst. apply Pr_meetTopL.
+      assert (erase_term l t2 = t2) as Hrwrite.
       SSCase "assertion". apply erase_label_id. assumption. assumption.
       rewrite Hrwrite. assumption.
-      assert (erase_term l t2 = t2) as Hrwrite. 
+      assert (erase_term l t2 = t2) as Hrwrite.
       SSCase "assertion". apply erase_label_id. assumption. assumption.
       rewrite Hrwrite. assumption.
       SCase "meetTopR".
-      simpl. subst. apply Pr_meetTopR. 
-      assert (erase_term l t2 = t2) as Hrwrite. 
+      simpl. subst. apply Pr_meetTopR.
+      assert (erase_term l t2 = t2) as Hrwrite.
       SSCase "assertion". apply erase_label_id. assumption. assumption.
       rewrite Hrwrite. assumption.
-      assert (erase_term l t2 = t2) as Hrwrite. 
+      assert (erase_term l t2 = t2) as Hrwrite.
       SSCase "assertion". apply erase_label_id. assumption. assumption.
       rewrite Hrwrite. assumption.
-    Case "term_CanFlowTo". inversion H. 
+    Case "term_CanFlowTo". inversion H.
       SCase "ctxL".
       simpl. apply Pr_canFlowToCtxL. apply IHt1_1 in H3. assumption.
       SCase "ctxR".
-      simpl. apply Pr_canFlowToCtxR. 
-      assert (erase_term l t1_1 = t1_1) as Hrwrite. 
+      simpl. apply Pr_canFlowToCtxR.
+      assert (erase_term l t1_1 = t1_1) as Hrwrite.
       SSCase "assertion". apply erase_label_id. assumption. assumption.
       rewrite Hrwrite. assumption. apply IHt1_2 in H4. assumption.
       SCase "canFlowToBot".
-      simpl. subst. apply Pr_canFlowToBot. 
-      assert (erase_term l t1_2 = t1_2) as Hrwrite. 
+      simpl. subst. apply Pr_canFlowToBot.
+      assert (erase_term l t1_2 = t1_2) as Hrwrite.
       SSCase "assertion". apply erase_label_id. assumption. assumption.
       rewrite Hrwrite. assumption.
-      assert (erase_term l t1_2 = t1_2) as Hrwrite. 
+      assert (erase_term l t1_2 = t1_2) as Hrwrite.
       SSCase "assertion". apply erase_label_id. assumption. assumption.
       rewrite Hrwrite. assumption.
       SCase "canFlowToEq".
-      simpl. subst. apply Pr_canFlowToEq. 
-      assert (erase_term l t1_2 = t1_2) as Hrwrite. 
+      simpl. subst. apply Pr_canFlowToEq.
+      assert (erase_term l t1_2 = t1_2) as Hrwrite.
       SSCase "assertion". apply erase_label_id. assumption. assumption.
       rewrite Hrwrite. assumption.
-      assert (erase_term l t1_2 = t1_2) as Hrwrite. 
+      assert (erase_term l t1_2 = t1_2) as Hrwrite.
       SSCase "assertion". apply erase_label_id. assumption. assumption.
       rewrite Hrwrite. assumption. reflexivity.
       SCase "canFlowToAB".
@@ -1325,22 +1190,22 @@ Proof.
       simpl. subst. assumption.
       SCase "canFlowToTop".
       simpl. subst. apply Pr_canFlowToTop.
-      assert (erase_term l t1_1 = t1_1) as Hrwrite. 
+      assert (erase_term l t1_1 = t1_1) as Hrwrite.
       SSCase "assertion". apply erase_label_id. assumption. assumption.
-      rewrite Hrwrite. assumption. 
-      assert (erase_term l t1_1 = t1_1) as Hrwrite. 
+      rewrite Hrwrite. assumption.
+      assert (erase_term l t1_1 = t1_1) as Hrwrite.
       SSCase "assertion". apply erase_label_id. assumption. assumption.
-      rewrite Hrwrite. assumption. 
+      rewrite Hrwrite. assumption.
     Case "term_Return". inversion H.
-    Case "term_Bind". inversion H. 
+    Case "term_Bind". inversion H.
     Case "term_GetLabel". inversion H.
     Case "term_GetClearance". inversion H.
     Case "term_LabelOf". inversion H.
      SCase "labelOfCtx".
-     simpl. apply Pr_labelOfCtx. 
+     simpl. apply Pr_labelOfCtx.
      apply IHt1 in H1. assumption.
-     SCase "labelOf". 
-     simpl. destruct (canFlowTo t2 l === Some true). 
+     SCase "labelOf".
+     simpl. destruct (canFlowTo t2 l === Some true).
      SSCase "true".
      assert (erase_term l t2 = t2) as Hrewrite.
      SSSCase "assertion".
@@ -1388,14 +1253,14 @@ Lemma deterministic_lio_reduce_l : forall l n x y1 y2,
   lio_reduce_l l n x y2 ->
   y1 = y2.
 Proof.
-  intros l n x y1 y2 Hy1 Hy2. 
+  intros l n x y1 y2 Hy1 Hy2.
   inversion Hy2.
   subst.
   inversion Hy1.
   subst.
   assert (m0 = m2 ).
   Case "assertion". apply deterministic_lio_reduce with (x := x) (n := n).
-  assumption. assumption. 
+  assumption. assumption.
   subst. reflexivity.
 Qed.
 
@@ -1408,7 +1273,7 @@ Lemma deterministic_lio_reduce_l_gen : forall l n1 n2 x y1 y2,
   lio_reduce_l l n2 x y2 ->
   y1 = y2.
 Proof.
-  intros l n1 n2 x y1 y2 Hy1 Hy2. 
+  intros l n1 n2 x y1 y2 Hy1 Hy2.
   intros n_rel.
   inversion Hy2.
   subst.
@@ -1416,7 +1281,7 @@ Proof.
   subst.
   assert (m0 = m2 ).
   Case "assertion". apply deterministic_lio_reduce with (x := x) (n := n).
-  assumption. assumption. 
+  assumption. assumption.
   subst. reflexivity.
 Qed.
 *)
@@ -1425,7 +1290,7 @@ Lemma erase_config_homo_if : forall l (b : bool)  m1 m2,
   is_l_of_t l ->
   erase_config l (if b then m1 else m2) =
                   if b then erase_config l m1 else erase_config l m2.
-Proof. intros. destruct b; eauto. 
+Proof. intros. destruct b; eauto.
 Qed.
 
 Lemma erase_config_idempotent : forall l m1,
@@ -1492,7 +1357,7 @@ Lemma inv_erase_conf1 : forall l l1 c1 t1,
   is_l_of_t l ->
   l1 [= l ->
   m_Config l1 c1 (erase_term l t1) = erase_config l (m_Config l1 c1 t1).
-Proof. 
+Proof.
   intros.
   simpl.
   rewrite H2.
@@ -1506,7 +1371,7 @@ Lemma inv_erase_return : forall l l1 c1 (t2 : t),
   is_l_of_t l ->
   l1 [= l ->
   m_Config l1 c1 (t_Return (erase_term l t2)) = erase_config l (m_Config l1 c1 (t_Return t2)).
-Proof. 
+Proof.
   intros.
   simpl.
   rewrite H2.
@@ -1519,7 +1384,7 @@ Lemma inv_erase_bind : forall l l1 c1 (t1 t2 : t),
   is_l_of_t l ->
   l1 [= l ->
   m_Config l1 c1 (t_Bind (erase_term l t1) (erase_term l t2)) = erase_config l (m_Config l1 c1 (t_Bind t1 t2)).
-Proof. 
+Proof.
   intros.
   simpl.
   rewrite H2.
@@ -1532,7 +1397,7 @@ Lemma inv_erase_app : forall l l1 c1 (t1 t2 : t),
   is_l_of_t l ->
   l1 [= l ->
   m_Config l1 c1 (t_App (erase_term l t1) (erase_term l t2)) = erase_config l (m_Config l1 c1 (t_App t1 t2)).
-Proof. 
+Proof.
   intros.
   simpl.
   rewrite H2.
@@ -1547,7 +1412,7 @@ Lemma inv_erase_LIO : forall l b l1 c1 (t2 : t),
   is_l_of_t l ->
   l1 [= l ->
   m_Config l1 c1 (t_VLIO b (erase_term l t2)) = erase_config l (m_Config l1 c1 (t_VLIO b t2)).
-Proof. 
+Proof.
   intros.
   simpl.
   rewrite H2.
@@ -1562,7 +1427,7 @@ Lemma current_label_monotonicity : forall l1 c1 t1 n l2 c2 t2,
   lio_reduce (m_Config l1 c1 t1) n (m_Config l2 c2 t2) ->
   l1 [= l2.
 Proof.
-  intros.  
+  intros.
   generalize dependent t2.
   generalize dependent c2.
   generalize dependent l2.
@@ -1575,13 +1440,13 @@ Proof.
   inversion H16. subst.
   apply IHt1_1 in H20. assumption.
   assumption. assumption. assumption. assumption.
-  subst. 
+  subst.
   apply canFlowTo_reflexive. assumption.
   subst.
   inversion H16. subst.
   apply IHt1_1 in H20. assumption.
   assumption. assumption. assumption. assumption.
-  subst. 
+  subst.
   apply canFlowTo_reflexive. assumption.
   Case "term_UnLabel". subst.
   inversion H3. subst.
@@ -1600,7 +1465,7 @@ Proof.
   inversion H16. subst.
   apply IHt1_1 in H20. assumption.
   assumption. assumption. assumption. assumption.
-  subst. 
+  subst.
   apply canFlowTo_reflexive. assumption.
   subst.
   inversion H16. subst.
@@ -1625,7 +1490,7 @@ Proof.
   generalize dependent c2.
   generalize dependent T1.
   term_cases (induction t1) Case; intros T1 t1_type c2 T2 t2 t2_type H; try inversion t1_type.
-    Case "term_VLIO". 
+    Case "term_VLIO".
   inversion H. inversion H16. inversion H26. simpl. rewrite l2_to_l. apply LIO_done.
   assumption. assumption.
     Case "term_VHole".
@@ -1680,17 +1545,17 @@ Proof.
   simpl. rewrite l2_to_l. subst.
   apply LIO_done. assumption. assumption.
     Case "term_Return". inversion H.  inversion H15.
-     subst.  
-     simpl. rewrite l2_to_l. 
+     subst.
+     simpl. rewrite l2_to_l.
      apply LIO_onestep. assumption. assumption. assumption. assumption.
      apply LIO_return. assumption. assumption. assumption.
      inversion H25. simpl. rewrite l2_to_l.
      apply LIO_done. assumption. assumption.
     Case "term_Bind". inversion H.  inversion H17.
-     subst.  
+     subst.
      simpl. rewrite l2_to_l.  rewrite l1_to_l.
      apply LIO_onestep. assumption. assumption. assumption. assumption.
-     apply LIO_bind. assumption. assumption. assumption. assumption. 
+     apply LIO_bind. assumption. assumption. assumption. assumption.
      rewrite inv_erase_LIO.
      rewrite inv_erase_conf1.
      apply IHt1_1 with (T1  := T3) (T2 := T3).
@@ -1704,7 +1569,7 @@ Proof.
      assumption. assumption. assumption. assumption. assumption.
      simpl. rewrite l2_to_l. rewrite l1_to_l.
      apply LIO_onestep. assumption. assumption. assumption. assumption.
-     apply LIO_bindEx. assumption. assumption. assumption. assumption. 
+     apply LIO_bindEx. assumption. assumption. assumption. assumption.
      rewrite inv_erase_LIO.
      rewrite inv_erase_conf1. subst.
      apply IHt1_1 with (T1 := T3) (T2 := T_TException).
@@ -1713,30 +1578,30 @@ Proof.
       apply GtT_lioVal. assumption.
      assumption. assumption. assumption. assumption. assumption.
      assumption. assumption. assumption. assumption.
-     inversion H27. simpl. rewrite l2_to_l. 
+     inversion H27. simpl. rewrite l2_to_l.
      apply LIO_done. assumption. assumption.
     Case "term_GetLabel".
     inversion H. inversion H13. simpl. rewrite l2_to_l. rewrite erase_label_id.
-    apply LIO_onestep. 
-    assumption. assumption. assumption. assumption. 
+    apply LIO_onestep.
+    assumption. assumption. assumption. assumption.
     apply LIO_getLabel.
-    assumption. assumption. assumption. assumption. 
+    assumption. assumption. assumption. assumption.
     assumption.
     inversion H23. simpl. rewrite l2_to_l.
     apply LIO_done. assumption. assumption.
     Case "term_GetClearance".
     inversion H. inversion H13. simpl. rewrite l2_to_l. rewrite erase_label_id.
-    apply LIO_onestep. 
-    assumption. assumption. assumption. assumption. 
+    apply LIO_onestep.
+    assumption. assumption. assumption. assumption.
     apply LIO_getClearance.
-    assumption. assumption. assumption. assumption. 
+    assumption. assumption. assumption. assumption.
     assumption.
     inversion H23. simpl. rewrite l2_to_l.
     apply LIO_done. assumption. assumption.
     Case "term_Label". inversion H.  subst. inversion H17.
-     subst.  
+     subst.
      unfold erase_config.
-     rewrite l2_to_l. 
+     rewrite l2_to_l.
      simpl.
      assert (canFlowTo (erase_term l t1_1) l = canFlowTo (erase_term l t1') l).
      SSCase "assertion". (* reducing label does not affect its value *) admit.
@@ -1747,36 +1612,36 @@ Proof.
      apply LIO_onestep. assumption. assumption. assumption. assumption.
      apply LIO_labelCtx. assumption. assumption.
      apply pure_reduce_simulation_helper.
-     assumption. assumption. assumption. 
+     assumption. assumption. assumption.
      SSCase "[/=".
      apply LIO_onestep. assumption. assumption. assumption. assumption.
      apply LIO_labelCtx. assumption. assumption.
      apply pure_reduce_simulation_helper.
-     assumption. assumption. assumption. 
+     assumption. assumption. assumption.
      remember (canFlowTo (erase_term l t1_1) l === Some true).  destruct b.
      SSCase "[=".
      simpl.
      rewrite <- Heqb.
      rewrite l2_to_l.
-     apply LIO_onestep. assumption. assumption.  assumption. assumption. 
+     apply LIO_onestep. assumption. assumption.  assumption. assumption.
      apply LIO_label. assumption. assumption. rewrite erase_label_id.
      assumption. assumption. assumption. rewrite erase_label_id.
      assumption. assumption. assumption. rewrite erase_label_id.
-     assumption. assumption. assumption. assumption. 
+     assumption. assumption. assumption. assumption.
      SSCase "[/=".
      simpl.
      rewrite <- Heqb.
      rewrite l2_to_l.
-     apply LIO_onestep. assumption. assumption.  assumption. assumption. 
+     apply LIO_onestep. assumption. assumption.  assumption. assumption.
      apply LIO_label. assumption. assumption. rewrite erase_label_id.
      assumption. assumption. assumption. rewrite erase_label_id.
      assumption. assumption. assumption. rewrite erase_label_id.
-     assumption. assumption. assumption. assumption. 
+     assumption. assumption. assumption. assumption.
      inversion H11.
      unfold erase_config.
-     rewrite l2_to_l. 
+     rewrite l2_to_l.
      apply LIO_done.
-     assumption. assumption. 
+     assumption. assumption.
     Case "term_UnLabel". inversion H.  subst. inversion H15.
      subst. simpl. rewrite l2_to_l.
      apply LIO_onestep.
@@ -1784,7 +1649,7 @@ Proof.
      apply LIO_unlabelCtx.
      assumption. assumption.
      apply pure_reduce_simulation_helper.
-     assumption. assumption. assumption. 
+     assumption. assumption. assumption.
      simpl. rewrite l2_to_l. rewrite l1_to_l.
      remember (canFlowTo (erase_term l l0) l === Some true).  destruct b.
      SCase "[=".
@@ -1793,7 +1658,7 @@ Proof.
      apply LIO_unlabel.
      assumption. assumption. rewrite erase_label_id. assumption. assumption.
      assumption. assumption. rewrite erase_label_id. assumption. assumption.
-     assumption. assumption. assumption. 
+     assumption. assumption. assumption.
      SCase "[/=". subst.
       (*  H16:     l2 = l1 |_| l0
           l1_to_l: l1 [= l
@@ -1809,7 +1674,7 @@ Proof.
      apply LIO_unlabelEx.
      assumption. assumption. rewrite erase_label_id. assumption. assumption.
      assumption. assumption. rewrite erase_label_id. assumption. assumption.
-     assumption. assumption. assumption. 
+     assumption. assumption. assumption.
      SCase "[/=". subst.
       (*  H16:     l2 = l1 |_| l0
           l1_to_l: l1 [= l
@@ -1817,17 +1682,17 @@ Proof.
           Heqb:    l0 [/= l
           contradiction: l2 [= l, i.e, l1 |_| l0 [= l so l0 [= l *)
       admit.
-     inversion H10. simpl. rewrite l2_to_l. 
+     inversion H10. simpl. rewrite l2_to_l.
      apply LIO_done.
-     assumption. assumption. 
+     assumption. assumption.
     Case "term_ToLabeled". inversion H.  subst. inversion H17.
       SCase "toLabeledCtx".
       subst. simpl. rewrite l2_to_l.
       apply LIO_onestep. assumption. assumption. assumption. assumption.
       apply LIO_toLabeledCtx.
-      assumption. assumption. 
+      assumption. assumption.
       apply pure_reduce_simulation_helper.
-      assumption. assumption. reflexivity. 
+      assumption. assumption. reflexivity.
       SCase "tolabeled".
       subst.
       assert (0 = n5 + 1 -> False).
@@ -1840,32 +1705,32 @@ Proof.
       contradiction.
       inversion H11. simpl.
       assert (erase_term l l2 = l2). apply erase_label_id. assumption. assumption.
-      rewrite l2_to_l. 
+      rewrite l2_to_l.
       apply LIO_done. assumption. assumption.
     Case "term_LowerClr".
-      inversion H. inversion H15. simpl. rewrite l2_to_l. 
+      inversion H. inversion H15. simpl. rewrite l2_to_l.
       subst.
-      apply LIO_onestep. assumption. assumption. assumption. assumption. 
+      apply LIO_onestep. assumption. assumption. assumption. assumption.
       apply LIO_lowerClrCtx. assumption. assumption.
       apply pure_reduce_simulation_helper.
       assumption. assumption. assumption.
       subst. simpl. rewrite l2_to_l.
-      apply LIO_onestep. assumption. assumption. assumption. assumption. 
+      apply LIO_onestep. assumption. assumption. assumption. assumption.
       rewrite erase_label_id.
       apply LIO_lowerClr. assumption. assumption.
       assumption. assumption. assumption.
       assumption. assumption. assumption.
       inversion H25. simpl. rewrite l2_to_l. apply LIO_done. assumption. assumption.
     Case "term_ThrowLIO".
-      inversion H. inversion H15. simpl. rewrite l2_to_l. 
-      apply LIO_onestep. assumption. assumption. assumption. assumption. 
+      inversion H. inversion H15. simpl. rewrite l2_to_l.
+      apply LIO_onestep. assumption. assumption. assumption. assumption.
       apply LIO_throwLIO. assumption. assumption. reflexivity.
       inversion H25. simpl. rewrite l2_to_l.
       apply LIO_done. assumption. assumption.
     Case "term_CatchLIO".
-      inversion H. inversion H17. simpl. rewrite l2_to_l.  rewrite l1_to_l. 
-      apply LIO_onestep. assumption. assumption. assumption. assumption. 
-      apply LIO_catchLIO. assumption. assumption. assumption. assumption. 
+      inversion H. inversion H17. simpl. rewrite l2_to_l.  rewrite l1_to_l.
+      apply LIO_onestep. assumption. assumption. assumption. assumption.
+      apply LIO_catchLIO. assumption. assumption. assumption. assumption.
       rewrite inv_erase_LIO.
       rewrite inv_erase_conf1.
       subst.
@@ -1873,12 +1738,12 @@ Proof.
       assumption.
       apply GtT_lioVal. inversion t2_type. assumption.
       assumption. assumption. assumption. assumption. assumption.
-      assumption. assumption. assumption. assumption. 
-      simpl. rewrite l2_to_l.  rewrite l1_to_l. 
-      apply LIO_onestep. assumption. assumption. assumption. assumption. 
-      apply LIO_catchLIOEx with (t1' := erase_term l t1'). assumption. assumption. 
-      assumption. assumption. 
-      subst. 
+      assumption. assumption. assumption. assumption.
+      simpl. rewrite l2_to_l.  rewrite l1_to_l.
+      apply LIO_onestep. assumption. assumption. assumption. assumption.
+      apply LIO_catchLIOEx with (t1' := erase_term l t1'). assumption. assumption.
+      assumption. assumption.
+      subst.
       rewrite inv_erase_conf1.
       rewrite inv_erase_LIO.
       apply IHt1_1 with (T1  := T1) (T2 := T_TException).
@@ -1888,7 +1753,7 @@ Proof.
       subst. apply GtT_lioVal. assumption.
       assumption. assumption. assumption. assumption.
       assumption. assumption. assumption. assumption.
-      assumption. 
+      assumption.
       inversion H27. simpl. rewrite l2_to_l.
       apply LIO_done.
       assumption. assumption.
@@ -1937,10 +1802,10 @@ Proof.
       apply LIO_pure. assumption. assumption. apply Pr_ifCtx.
       apply pure_reduce_simulation_helper.
       assumption. assumption. auto.
-      simpl. rewrite l2_to_l. apply LIO_pure. assumption. assumption. apply Pr_ifTrue. auto. 
-      simpl. rewrite l2_to_l. apply LIO_pure. assumption. assumption. apply Pr_ifFalse. auto. 
+      simpl. rewrite l2_to_l. apply LIO_pure. assumption. assumption. apply Pr_ifTrue. auto.
+      simpl. rewrite l2_to_l. apply LIO_pure. assumption. assumption. apply Pr_ifFalse. auto.
     Case "term_Return". inversion H.
-     subst.  
+     subst.
      simpl. rewrite l2_to_l.
      apply LIO_return. assumption. assumption. assumption.
      inversion H13.
@@ -1956,7 +1821,7 @@ Proof.
      apply GtT_lioVal. assumption.
      assumption. assumption. assumption. assumption. assumption.
      assumption. assumption. assumption. assumption. assumption.
-     assumption. assumption. 
+     assumption. assumption.
 
      subst. simpl. rewrite l1_to_l. rewrite l2_to_l.
      apply LIO_bindEx.
@@ -1970,14 +1835,14 @@ Proof.
      assumption. assumption. assumption. assumption. assumption.
      assumption. assumption.
      inversion H15.
-    Case "term_GetLabel". inversion H. 
-     subst.  
+    Case "term_GetLabel". inversion H.
+     subst.
      simpl. rewrite l2_to_l.
      rewrite erase_label_id.
      apply LIO_getLabel. assumption. assumption. assumption. assumption. assumption.
      inversion H11.
-    Case "term_GetClearance". inversion H. 
-     subst.  
+    Case "term_GetClearance". inversion H.
+     subst.
      simpl. rewrite l2_to_l.
      rewrite erase_label_id.
      apply LIO_getClearance. assumption. assumption. assumption. assumption. assumption.
@@ -1991,24 +1856,24 @@ Proof.
      destruct (canFlowTo (erase_term l t1') l === Some true).
      SSCase "t1' [= l".
      apply LIO_labelCtx.
-     assumption. assumption. 
+     assumption. assumption.
      apply pure_reduce_simulation_helper.
-     assumption. assumption. assumption. 
+     assumption. assumption. assumption.
      SSCase "t1' [/= l".
      apply LIO_labelCtx.
-     assumption. assumption. 
+     assumption. assumption.
      apply pure_reduce_simulation_helper.
      assumption. assumption. assumption.
      SCase "label".
      subst. simpl. rewrite l2_to_l.
-       assert (erase_term l t1_1 = t1_1) as Hrwrt. 
+       assert (erase_term l t1_1 = t1_1) as Hrwrt.
        SSSCase "assertion". rewrite erase_label_id. reflexivity. assumption. assumption.
        rewrite -> Hrwrt.
        remember (canFlowTo t1_1 l === Some true). destruct b.
        SSSCase "t1_1 [= l". apply LIO_label.
        assumption. assumption. assumption.
-       assumption. assumption. assumption. 
-       SSSCase "t1_1 [/= l". 
+       assumption. assumption. assumption.
+       SSSCase "t1_1 [/= l".
        apply LIO_label. assumption. assumption. assumption. assumption. assumption. assumption.
      inversion H15.
     Case "term_UnLabel". inversion H.
@@ -2019,14 +1884,14 @@ Proof.
       assumption. assumption. assumption.
       SCase "unlabel".
       subst. simpl. rewrite l1_to_l. rewrite l2_to_l.
-      assert (erase_term l l0 = l0) as Hrwrt. 
+      assert (erase_term l l0 = l0) as Hrwrt.
       SSSCase "assertion". rewrite erase_label_id. reflexivity. assumption. assumption.
       rewrite -> Hrwrt.
       remember (canFlowTo l0 l === Some true). destruct b.
       SSSCase "l0 [= l". apply LIO_unlabel.
       assumption. assumption. assumption. assumption. assumption.
       assumption. assumption.
-      SSSCase "l0 [/= l". 
+      SSSCase "l0 [/= l".
       (*  H11:     l2 = l1 |_| l0
           l1_to_l: l1 [= l
           l2_to_l: l2 [= l
@@ -2035,14 +1900,14 @@ Proof.
       admit.
 
       subst. simpl. rewrite l1_to_l. rewrite l2_to_l.
-      assert (erase_term l l0 = l0) as Hrwrt. 
+      assert (erase_term l l0 = l0) as Hrwrt.
       SSSCase "assertion". rewrite erase_label_id. reflexivity. assumption. assumption.
       rewrite -> Hrwrt.
       remember (canFlowTo l0 l === Some true). destruct b.
       SSSCase "l0 [= l". apply LIO_unlabelEx.
       assumption. assumption. assumption. assumption. assumption.
       assumption. assumption.
-      SSSCase "l0 [/= l". 
+      SSSCase "l0 [/= l".
       (*  H11:     l2 = l1 |_| l0
           l1_to_l: l1 [= l
           l2_to_l: l2 [= l
@@ -2054,9 +1919,9 @@ Proof.
       SCase "toLabeledCtx".
       subst. simpl. rewrite l2_to_l.
       apply LIO_toLabeledCtx.
-      assumption. assumption. 
+      assumption. assumption.
       apply pure_reduce_simulation_helper.
-      assumption. assumption. reflexivity. 
+      assumption. assumption. reflexivity.
       SCase "tolabeled".
       subst.
       assert (0 = n5 + 1 -> False).
@@ -2088,7 +1953,7 @@ Proof.
       inversion H13.
     Case "term_CatchLIO". inversion H.
       subst. simpl. rewrite l2_to_l. rewrite l1_to_l.
-      apply LIO_catchLIO. assumption. assumption. assumption. assumption. 
+      apply LIO_catchLIO. assumption. assumption. assumption. assumption.
       rewrite inv_erase_conf1.
       rewrite inv_erase_LIO.
       apply lio_reduce_multi_simulation_0_helper with (T1:=T1) (T2:=T2).
@@ -2096,10 +1961,10 @@ Proof.
       apply GtT_lioVal. assumption.
       assumption. assumption. assumption. assumption. assumption.
       assumption. assumption. assumption. assumption. assumption.
-      assumption. assumption. 
+      assumption. assumption.
       subst. simpl. rewrite l1_to_l. rewrite l2_to_l.
-      apply LIO_catchLIOEx with (t1' := erase_term l t1'). assumption. assumption. 
-      assumption. assumption. 
+      apply LIO_catchLIOEx with (t1' := erase_term l t1'). assumption. assumption.
+      assumption. assumption.
       rewrite inv_erase_conf1.
       rewrite inv_erase_LIO.
       apply lio_reduce_multi_simulation_0_helper with (T1:=T1) (T2:=T_TException).
@@ -2108,7 +1973,7 @@ Proof.
       subst. apply GtT_lioVal. assumption.
       assumption. assumption. assumption. assumption. assumption.
       assumption. assumption. assumption. assumption. assumption.
-      assumption. assumption. 
+      assumption. assumption.
       inversion H15.
 Qed.
 
@@ -2127,7 +1992,7 @@ Proof.
   rewrite H in l1_to_l.
   solve by inversion.
   assumption. assumption. assumption. assumption. assumption. assumption.
-  assumption. assumption. 
+  assumption. assumption.
 Qed.
 
 Lemma lio_reduce_simulation_2_helper: forall l n l1 c1 t1 l2 c2 t2,
@@ -2155,19 +2020,19 @@ Lemma lio_reduce_simulation_3_unlabel : forall l n l1 c1 t1 l2 c2 t2,
   lio_reduce (m_Config l1 c1 (t_UnLabel t1)) n (m_Config l2 c2 t2) ->
   lio_reduce_l l n (erase_config l (m_Config l1 c1 (t_UnLabel t1))) (erase_config l (m_Config l2 c2 t2)).
 Proof.
-  intros l n l1 c1 t1 l2 c2 t2 l_of_t_l l_of_t_l1 l_of_t_c1 l_of_t_l2 l_of_t_c2 
+  intros l n l1 c1 t1 l2 c2 t2 l_of_t_l l_of_t_l1 l_of_t_c1 l_of_t_l2 l_of_t_c2
          H1 H H0.
     subst. inversion H0.
     SCase "term_UnLabelCtx". subst.
     rewrite erase_config_idempotent with (m1 := m_Config l2 c2 (t_UnLabel t')).
-    simpl. rewrite H1. 
+    simpl. rewrite H1.
     apply lio_reduce_l_step.
     assumption.
     apply LIO_unlabelCtx.
     assumption. assumption.
     apply pure_reduce_simulation_helper.
     assumption. assumption. reflexivity.
-    assumption. 
+    assumption.
     SCase "term_UnLabel". subst.
     rewrite erase_config_idempotent with (m1 := m_Config l2 c2 (t_Return t0)).
     remember (canFlowTo l0 l === Some true). destruct b.
@@ -2182,7 +2047,7 @@ Proof.
     assumption. assumption. assumption. assumption.
     assumption. assumption. reflexivity. assumption.
     assumption. assumption. assumption. assumption.
-    assumption. assumption. 
+    assumption. assumption.
     SSCase "l0 [/= l".
     simpl.
     rewrite H. rewrite H1. rewrite erase_label_id. rewrite <- Heqb.
@@ -2194,7 +2059,7 @@ Proof.
     assumption. assumption. assumption. assumption.
     assumption. assumption. reflexivity. assumption.
     assumption. assumption. assumption. assumption.
-    assumption. assumption. assumption. 
+    assumption. assumption. assumption.
     SCase "term_UnLabelEx". subst.
     rewrite erase_config_idempotent with (m1 := m_Config l2 c2 (t_ThrowLIO t0)).
     remember (canFlowTo (erase_term l l0) l  === Some true). destruct b.
@@ -2222,7 +2087,7 @@ Proof.
     assumption. assumption. rewrite erase_label_id. assumption. assumption.
     assumption. assumption. reflexivity. assumption.
     assumption. assumption. assumption. assumption.
-    assumption. 
+    assumption.
     inversion H11.
 Qed.
 
@@ -2264,7 +2129,7 @@ Proof.
     apply LIO_onestep. assumption. assumption. assumption. assumption.
     apply LIO_pure. assumption. assumption.
     assert ( (t_VLIO b (erase_term l t2)) = erase_term l (t_VLIO b t2)).
-    SCase "assertion". auto. 
+    SCase "assertion". auto.
     rewrite H7.
     apply pure_reduce_simulation_helper.
     assumption. assumption. auto.
@@ -2273,7 +2138,7 @@ Proof.
     apply LIO_onestep. assumption. assumption. assumption. assumption.
     apply LIO_pure. assumption. assumption.
     assert ( (t_VLIO b (erase_term l t2)) = erase_term l (t_VLIO b t2)).
-    SCase "assertion". auto. 
+    SCase "assertion". auto.
     rewrite H7.
     apply pure_reduce_simulation_helper.
     assumption. assumption. auto.
@@ -2282,7 +2147,7 @@ Proof.
     apply LIO_onestep. assumption. assumption. assumption. assumption.
     apply LIO_pure. assumption. assumption.
     assert ( (t_VLIO b (erase_term l t2)) = erase_term l (t_VLIO b t2)).
-    SCase "assertion". auto. 
+    SCase "assertion". auto.
     rewrite H7.
     apply pure_reduce_simulation_helper.
     assumption. assumption. auto.
@@ -2325,7 +2190,7 @@ Lemma lio_reduce_simulation_3_catchLIO : forall l n l1 c1 t1_1 t1_2 l2 c2 t2 T1,
   lio_reduce (m_Config l1 c1 (t_CatchLIO t1_1 t1_2)) n (m_Config l2 c2 t2) ->
   lio_reduce_l l n (erase_config l (m_Config l1 c1 (t_CatchLIO t1_1 t1_2))) (erase_config l (m_Config l2 c2 t2)).
 Proof.
-  intros l n l1 c1 t1_1 t1_2 l2 c2 t2 T1 t1_1_type l_of_t_l l_of_t_l1 l_of_t_c1 l_of_t_l2 l_of_t_c2 
+  intros l n l1 c1 t1_1 t1_2 l2 c2 t2 T1 t1_1_type l_of_t_l l_of_t_l1 l_of_t_c1 l_of_t_l2 l_of_t_c2
          H1 H H0.
   subst.
   generalize dependent t2.
@@ -2353,13 +2218,13 @@ Proof.
     inversion H17.
     inversion H12.
   Case "term_VHole".
-    inversion H0. subst. inversion H16. subst. inversion H18. subst. inversion H21. subst. 
-    inversion H16. subst. inversion H18. subst. inversion H21. subst. 
-    inversion H13. 
+    inversion H0. subst. inversion H16. subst. inversion H18. subst. inversion H21. subst.
+    inversion H16. subst. inversion H18. subst. inversion H21. subst.
+    inversion H13.
   Case "term_Var".
-    inversion H0. subst. inversion H18. subst. inversion H19. subst. 
-    inversion H22. subst. inversion H18. subst. inversion H19. subst. 
-    inversion H22. inversion H15. 
+    inversion H0. subst. inversion H18. subst. inversion H19. subst.
+    inversion H22. subst. inversion H18. subst. inversion H19. subst.
+    inversion H22. inversion H15.
   Case "term_App".
     inversion H0. subst. inversion H20. subst. inversion H16. subst.
     rewrite H1 in H. solve by inversion. subst.
@@ -2441,7 +2306,7 @@ Proof.
     rewrite H1 in H. solve by inversion. subst.
     inversion H16. subst. inversion H20. subst.
     rewrite H1 in H. solve by inversion. subst.
-    rewrite H1 in H. solve by inversion. 
+    rewrite H1 in H. solve by inversion.
 Qed.
 
 
@@ -2458,9 +2323,9 @@ Lemma lio_reduce_simulation_3_bind : forall l n l1 c1 t1_1 t1_2 l2 c2 t2 T1,
   lio_reduce_l l n (erase_config l (m_Config l1 c1 (t_Bind t1_1 t1_2))) (erase_config l (m_Config l2 c2 t2)).
 Proof.
 (* TODO:  proofexactly as for catchLIO above *)
-  intros l n l1 c1 t1_1 t1_2 l2 c2 t2 T1 t1_1_type l_of_t_l l_of_t_l1 l_of_t_c1 l_of_t_l2 l_of_t_c2 
+  intros l n l1 c1 t1_1 t1_2 l2 c2 t2 T1 t1_1_type l_of_t_l l_of_t_l1 l_of_t_c1 l_of_t_l2 l_of_t_c2
          H1 H H0.
-    subst. 
+    subst.
   generalize dependent t2.
   generalize dependent c2.
   generalize dependent l2.
@@ -2485,13 +2350,13 @@ Proof.
     inversion H17.
     inversion H12.
   Case "term_VHole".
-    inversion H0. subst. inversion H16. subst. inversion H18. subst. inversion H21. subst. 
-    inversion H16. subst. inversion H18. subst. inversion H21. subst. 
-    inversion H13. 
+    inversion H0. subst. inversion H16. subst. inversion H18. subst. inversion H21. subst.
+    inversion H16. subst. inversion H18. subst. inversion H21. subst.
+    inversion H13.
   Case "term_Var".
-    inversion H0. subst. inversion H18. subst. inversion H19. subst. 
-    inversion H22. subst. inversion H18. subst. inversion H19. subst. 
-    inversion H22. inversion H15. 
+    inversion H0. subst. inversion H18. subst. inversion H19. subst.
+    inversion H22. subst. inversion H18. subst. inversion H19. subst.
+    inversion H22. inversion H15.
   Case "term_App".
     inversion H0. subst. inversion H20. subst. inversion H16. subst.
     rewrite H1 in H. solve by inversion. subst.
@@ -2573,7 +2438,7 @@ Proof.
     rewrite H1 in H. solve by inversion. subst.
     inversion H16. subst. inversion H20. subst.
     rewrite H1 in H. solve by inversion. subst.
-    rewrite H1 in H. solve by inversion. 
+    rewrite H1 in H. solve by inversion.
 Qed.
 
 Lemma lio_reduce_simulation_3_helper : forall l n l1 c1 t1 l2 c2 t2 T1,
@@ -2588,7 +2453,7 @@ Lemma lio_reduce_simulation_3_helper : forall l n l1 c1 t1 l2 c2 t2 T1,
   lio_reduce (m_Config l1 c1 t1) n (m_Config l2 c2 t2) ->
   lio_reduce_l l n (erase_config l (m_Config l1 c1 t1)) (erase_config l (m_Config l2 c2 t2)).
 Proof.
-  intros l n l1 c1 t1 l2 c2 t2 T1 t1_type l_of_t_l l_of_t_l1 l_of_t_c1 l_of_t_l2 l_of_t_c2 
+  intros l n l1 c1 t1 l2 c2 t2 T1 t1_type l_of_t_l l_of_t_l1 l_of_t_c1 l_of_t_l2 l_of_t_c2
          H1.
   generalize dependent t2.
   generalize dependent c2.
@@ -2601,17 +2466,17 @@ Proof.
   Case "term_Bind".
     inversion t1_type. subst.
     apply lio_reduce_simulation_3_bind with (T1 := T0).
-    assumption. assumption. assumption. assumption. assumption. 
+    assumption. assumption. assumption. assumption. assumption.
     assumption. assumption. assumption. assumption.
   Case "term_UnLabel".
     apply lio_reduce_simulation_3_unlabel.
-    assumption. assumption. assumption. assumption. assumption. 
-    assumption. assumption. assumption. 
-  Case "term_CatchLIO". 
+    assumption. assumption. assumption. assumption. assumption.
+    assumption. assumption. assumption.
+  Case "term_CatchLIO".
     inversion t1_type. subst.
     apply lio_reduce_simulation_3_catchLIO with (T1 := T1).
-    assumption. assumption. assumption. assumption. assumption. 
-    assumption. assumption. assumption. assumption. 
+    assumption. assumption. assumption. assumption. assumption.
+    assumption. assumption. assumption. assumption.
 Qed.
 
 Lemma lio_reduce_simulation_0 : forall l l1 c1 t1 l2 c2 t2 T1 T2,
@@ -2629,7 +2494,7 @@ Proof.
   simpl.
   remember (canFlowTo l1 l === Some true). destruct b.
   Case "[=".
-  remember (canFlowTo l2 l === Some true). destruct b. 
+  remember (canFlowTo l2 l === Some true). destruct b.
   SCase "[=".
      rewrite inv_erase_conf1.
      rewrite inv_erase_conf1.
@@ -2637,7 +2502,7 @@ Proof.
      apply lio_reduce_l_step.
      assumption.
      apply lio_reduce_simulation_0_helper with (T1 := T1) (T2 := T2).
-     assumption. assumption. 
+     assumption. assumption.
      assumption. rewrite <- Heqb. trivial. rewrite <- Heqb0. trivial.
      assumption. assumption. assumption. assumption.
      assumption. rewrite <- Heqb0. trivial. assumption.
@@ -2648,8 +2513,8 @@ Proof.
      apply lio_reduce_simulation_3_helper with (T1 := T1).
      assumption. assumption. assumption. assumption. assumption. assumption.
      rewrite <- Heqb. trivial. rewrite <- Heqb0. trivial.
-     assumption. assumption. assumption. assumption. 
-     rewrite <- Heqb0. trivial. assumption. assumption. assumption. 
+     assumption. assumption. assumption. assumption.
+     rewrite <- Heqb0. trivial. assumption. assumption. assumption.
      rewrite <- Heqb. trivial.
   Case "[/=".
   remember (canFlowTo l2 l === Some true). destruct b.
@@ -2667,7 +2532,7 @@ Proof.
   SCase "[/=".
      assert (lio_reduce_l l 0 (m_Config t_VHole t_VHole t_VHole)
                   (m_Config t_VHole t_VHole t_VHole) =
-             lio_reduce_l l 0 (erase_config l (m_Config l1 c1 t1)) 
+             lio_reduce_l l 0 (erase_config l (m_Config l1 c1 t1))
                   (erase_config l (erase_config l (m_Config l2 c2 t2)))).
      simpl. rewrite <- Heqb. rewrite <- Heqb0. reflexivity.
      rewrite H7.
@@ -2685,7 +2550,7 @@ Lemma lio_reduce_simulation_n_helper': forall n l l1 c1 t1 l2 c2 t2 T1,
   lio_reduce (m_Config l1 c1 t1) (S n) (m_Config l2 c2 t2) ->
   lio_reduce_l l (S n) (erase_config l (m_Config l1 c1 t1)) (erase_config l (m_Config l2 c2 t2)).
 Proof.
-  intros n l l1 c1 t1 l2 c2 t2 T1 t1_type l_of_t l1_to_l l2_to_l H. 
+  intros n l l1 c1 t1 l2 c2 t2 T1 t1_type l_of_t l1_to_l l2_to_l H.
   generalize dependent t2.
   generalize dependent c2.
   generalize dependent l2.
@@ -2696,9 +2561,9 @@ Proof.
   generalize dependent T1.
   term_cases (induction t1) Case;
     intros; try (inversion H; subst; try (rewrite l2_to_l in H); solve by inversion).
-    Case "term_Bind". inversion H. 
+    Case "term_Bind". inversion H.
      SCase "bind".
-     subst.  
+     subst.
      rewrite erase_config_idempotent with (m1 := m_Config l2 c2 (t_App t1_2 t1')).
      simpl. rewrite l1_to_l. rewrite l2_to_l.
      apply lio_reduce_l_step. assumption.
@@ -2708,7 +2573,7 @@ Proof.
      assumption. assumption. assumption. assumption. assumption.
      assumption. assumption. assumption. assumption.
      SCase "bindEx".
-     subst.  
+     subst.
      rewrite erase_config_idempotent with (m1 := m_Config l2 c2 (t_ThrowLIO t1')).
      simpl. rewrite l1_to_l. rewrite l2_to_l.
      apply lio_reduce_l_step. assumption.
@@ -2725,7 +2590,7 @@ Proof.
       rewrite erase_config_idempotent with (m1 := m_Config l2 c2 (t_Label t1_1 t')).
       simpl.
       rewrite l1_to_l.
-      assert (erase_term l t1_1 = t1_1) as Hrwrt. 
+      assert (erase_term l t1_1 = t1_1) as Hrwrt.
       SSCase "assertion". rewrite erase_label_id. reflexivity. assumption. assumption.
       rewrite -> Hrwrt.
       remember (canFlowTo t1_1 l === Some true). destruct b.
@@ -2733,21 +2598,21 @@ Proof.
       apply lio_reduce_l_step. assumption.
       apply LIO_toLabeled with (n5 := n5) (l' := l') (c' := c').
       assumption. assumption. assumption. assumption.
-      assumption. assumption. assumption. 
-      inversion t1_type. 
+      assumption. assumption. assumption.
+      inversion t1_type.
       apply lio_reduce_multi_helper with (T1 := T5).
-      assumption. assumption. assumption. assumption. 
       assumption. assumption. assumption. assumption.
-      assumption. assumption. 
-      SSCase "t1_1 [/= l".  
+      assumption. assumption. assumption. assumption.
+      assumption. assumption.
+      SSCase "t1_1 [/= l".
       rewrite inv_erase_label with (l:=l) (t2:= erase_term l t').
       rewrite inv_erase_conf1.
       rewrite <- erase_config_idempotent.
       apply lio_reduce_l_step. assumption.
       apply LIO_toLabeled with (n5:=n5) (l':=l') (c':=c').
       assumption. assumption. assumption. assumption. assumption. assumption.
-      assumption. 
-      inversion t1_type. 
+      assumption.
+      inversion t1_type.
       apply lio_reduce_multi_helper with (T1 := T5).
       assumption. assumption. assumption. assumption. assumption. assumption.
       assumption. assumption. assumption. assumption. assumption. assumption.
@@ -2756,7 +2621,7 @@ Proof.
       SCase "tolabeledEx". subst.
       rewrite erase_config_idempotent with
       (m1 := (m_Config l2 c2 (t_Return (t_VLabeled true l2 t')))).
-      simpl. rewrite l2_to_l. 
+      simpl. rewrite l2_to_l.
       assert (erase_term l l2 = l2). rewrite erase_label_id.
       reflexivity. assumption. assumption.
       rewrite H0. rewrite l2_to_l.
@@ -2766,31 +2631,31 @@ Proof.
       assumption. assumption. assumption. rewrite erase_label_id. assumption.
       assumption. assumption. rewrite erase_label_id. assumption.
       assumption. assumption.
-      inversion t1_type. 
+      inversion t1_type.
       apply lio_reduce_multi_helper with (T1 := T5).
-      assumption. assumption. assumption. assumption. 
+      assumption. assumption. assumption. assumption.
       assumption. assumption. assumption.
       assumption. assumption.  rewrite erase_label_id. assumption.
-      assumption. assumption. assumption. 
+      assumption. assumption. assumption.
       inversion H9.
-    Case "term_CatchLIO". inversion H. 
+    Case "term_CatchLIO". inversion H.
      SCase "no ex".
-     subst.  
+     subst.
      rewrite erase_config_idempotent with (m1 := m_Config l2 c2 (t_Return t1')).
      simpl. rewrite l1_to_l. rewrite l2_to_l.
      apply lio_reduce_l_step. assumption.
      apply LIO_catchLIO. assumption. assumption. assumption. assumption.
-     inversion t1_type. 
+     inversion t1_type.
      apply lio_reduce_multi_helper with (T1 := T1).
      assumption. assumption. assumption. assumption. assumption.
-     assumption. assumption. assumption. assumption. 
+     assumption. assumption. assumption. assumption.
      SCase "ex".
-     subst.  
+     subst.
      rewrite erase_config_idempotent with (m1 := m_Config l2 c2 (t_App t1_2 t1')).
      simpl. rewrite l1_to_l. rewrite l2_to_l.
      apply lio_reduce_l_step. assumption.
      apply LIO_catchLIOEx. assumption. assumption. assumption. assumption.
-     inversion t1_type. 
+     inversion t1_type.
      apply lio_reduce_multi_helper with (T1 := T1).
      assumption. assumption. assumption. assumption. assumption.
      assumption. assumption. assumption. assumption.
@@ -2836,18 +2701,18 @@ Proof.
   simpl.
   remember (canFlowTo l1 l === Some true). destruct b.
   Case "[=".
-  remember (canFlowTo l2 l === Some true). destruct b. 
+  remember (canFlowTo l2 l === Some true). destruct b.
   SCase "[=".
     rewrite inv_erase_conf1.
     rewrite inv_erase_conf1.
     apply lio_reduce_simulation_n_helper with (T1 := T1) (T2 := T2).
-    assumption. assumption. assumption. assumption. assumption. 
+    assumption. assumption. assumption. assumption. assumption.
     assumption. assumption.
     rewrite <- Heqb. reflexivity.
     rewrite <- Heqb0. reflexivity.
-    assumption. assumption. assumption. assumption. 
+    assumption. assumption. assumption. assumption.
     rewrite <- Heqb0. reflexivity.
-    assumption. assumption. assumption. 
+    assumption. assumption. assumption.
     rewrite <- Heqb. reflexivity.
   SCase "[/=".
     rewrite inv_erase_conf1.
@@ -2855,28 +2720,28 @@ Proof.
     apply lio_reduce_simulation_3_helper with (T1 := T1).
     assumption. assumption. assumption. assumption. assumption. assumption.
     rewrite <- Heqb. trivial. rewrite <- Heqb0. trivial.
-    assumption. assumption. assumption. assumption. 
+    assumption. assumption. assumption. assumption.
     rewrite <- Heqb0. trivial. assumption. assumption. assumption.
     rewrite <- Heqb. trivial.
   Case "[/=".
-  remember (canFlowTo l2 l === Some true). destruct b. 
+  remember (canFlowTo l2 l === Some true). destruct b.
   SCase "[=".
     rewrite inv_erase_conf0 with (l := l) (l1 := l1) (c1 := c1) (t2 := t1).
     rewrite inv_erase_conf1.
     rewrite erase_config_idempotent with (m1 := m_Config l2 c2 t2).
     apply lio_reduce_l_step. assumption.
     apply lio_reduce_simulation_1_helper.
-    assumption. assumption. assumption. assumption. assumption. 
+    assumption. assumption. assumption. assumption. assumption.
     rewrite <- Heqb. reflexivity.
     rewrite <- Heqb0. reflexivity.
-    assumption. assumption. assumption. assumption. assumption. 
+    assumption. assumption. assumption. assumption. assumption.
     rewrite <- Heqb0. reflexivity.
-    assumption. assumption. assumption. 
+    assumption. assumption. assumption.
     rewrite <- Heqb. reflexivity.
   SCase "[/=".
      assert (lio_reduce_l l n (m_Config t_VHole t_VHole t_VHole)
                   (m_Config t_VHole t_VHole t_VHole) =
-             lio_reduce_l l n (erase_config l (m_Config l1 c1 t1)) 
+             lio_reduce_l l n (erase_config l (m_Config l1 c1 t1))
                   (erase_config l (erase_config l (m_Config l2 c2 t2)))).
      simpl. rewrite <- Heqb. rewrite <- Heqb0. reflexivity.
      rewrite H7.
@@ -2914,13 +2779,13 @@ Proof.
   intros. inversion H6.
   Case "onestep".
   apply LIO_l_onestep.
-  assumption. 
+  assumption.
   apply lio_reduce_simulation_n with (T1 := T1) (T2 := T2).
-  assumption. assumption. assumption. assumption. assumption. assumption. 
+  assumption. assumption. assumption. assumption. assumption. assumption.
   assumption. assumption.
   Case "done".
   apply LIO_l_done.
-  assumption. 
+  assumption.
 Qed.
 
 
@@ -3037,19 +2902,19 @@ Proof.
   Case "term_ToLabeled".
   inversion H. subst. inversion H1. subst.
   apply values_cannot_be_lio_reduced in H7. contradiction.
-  unfold is_v_of_t. trivial. eauto. 
+  unfold is_v_of_t. trivial. eauto.
   Case "term_LowerClr".
   inversion H. subst. inversion H1. subst.
   apply values_cannot_be_lio_reduced in H7. contradiction.
-  unfold is_v_of_t. trivial. eauto. 
+  unfold is_v_of_t. trivial. eauto.
   Case "term_ThrowLIO".
   inversion H. subst. inversion H1. subst.
   apply values_cannot_be_lio_reduced in H7. contradiction.
-  unfold is_v_of_t. trivial. eauto. 
+  unfold is_v_of_t. trivial. eauto.
   Case "term_CatchLIO".
   inversion H. subst. inversion H1. subst.
   apply values_cannot_be_lio_reduced in H7. contradiction.
-  unfold is_v_of_t. trivial. eauto. 
+  unfold is_v_of_t. trivial. eauto.
 Qed.
 
 
@@ -3281,7 +3146,7 @@ Proof.
   Case "assertion".
   apply label_does_not_decrease with (l := l) (c := c) (t0 := t) (n := n) (c1 := c1) (t1 := t1) (b1 := b1).
   assumption. assumption. assumption. assumption. assumption. eauto. assumption.
-  assert (l2 [/= lA). 
+  assert (l2 [/= lA).
   Case "assertion".
   apply label_does_not_decrease with (l := l) (c := c) (t0 := t) (n := n) (c1 := c2) (t1 := t2) (b1 := b2).
   assumption. assumption. assumption. assumption. assumption. eauto. assumption.
@@ -3338,7 +3203,7 @@ Proof.
   generalize dependent t2.
   lio_reduce_l_multi_cases(inversion H9) Case.
   Case "LIO_l_onestep". intros.
-  simpl in H9. simpl in H16. 
+  simpl in H9. simpl in H16.
   rewrite H7 in H9. rewrite H8 in H16.
   lio_reduce_l_multi_cases(inversion H16) SCase.
   SCase "LIO_l_onestep".
@@ -3348,12 +3213,12 @@ Proof.
   assumption. assumption.  inversion H23.
   SCase "LIO_l_done". rewrite H17 in H0. inversion H0.
   Case "LIO_l_done". intros.
-  simpl in H9. simpl in H15. 
+  simpl in H9. simpl in H15.
   rewrite H7 in H9. rewrite H8 in H15.
   rewrite H7 in H10. inversion H10.
   rewrite H19 in H9.
   lio_reduce_l_multi_cases(inversion H15) SCase.
-  SCase "LIO_l_onestep". subst. 
+  SCase "LIO_l_onestep". subst.
   rewrite H19 in H15. rewrite H19 in H20.
   inversion H20.
   inversion H21.
@@ -3380,13 +3245,13 @@ Proof.
    SCase "l1 [= lA". remember (canFlowTo l2 lA === Some true). destruct b.
     SSCase "l2 [= lA".
     apply deterministic_lio_reduce_l_multi1 with (l := l) (c := c) (t0 := t) (n := n).
-    assumption. eauto. eauto. 
+    assumption. eauto. eauto.
     simpl. rewrite <- Heqb. rewrite <- Heqb0. assumption.
     simpl. rewrite <- Heqb. rewrite <- Heqb1. assumption.
-    SSCase "l2 [/= lA". 
+    SSCase "l2 [/= lA".
     apply deterministic_lio_reduce_l_multi2 with (l := l) (c := c) (t0 := t) (n := n).
     assumption. assumption. assumption. assumption. assumption.
-    assumption. assumption. eauto. eauto.  eauto. 
+    assumption. assumption. eauto. eauto.  eauto.
     simpl. rewrite <- Heqb0. assumption.
     simpl. rewrite <- Heqb1. assumption.
    SCase "l1 [/= lA". remember (canFlowTo l2 lA === Some true). destruct b.
@@ -3394,21 +3259,21 @@ Proof.
     symmetry.
     apply deterministic_lio_reduce_l_multi2 with (l := l) (c := c) (t0 := t) (n := n).
     assumption. assumption. assumption. assumption. assumption.
-    assumption. assumption. eauto. eauto.  eauto. 
+    assumption. assumption. eauto. eauto.  eauto.
     simpl. rewrite <- Heqb1. assumption.
     simpl. rewrite <- Heqb0. assumption.
     SSCase "l2 [/= lA".
     apply deterministic_lio_reduce_l_multi1 with (l := l) (c := c) (t0 := t) (n := n).
-    assumption. eauto. eauto. 
+    assumption. eauto. eauto.
     simpl. rewrite <- Heqb. rewrite <- Heqb0. assumption.
     simpl. rewrite <- Heqb. rewrite <- Heqb1. assumption.
-  Case "l [/= lA". 
+  Case "l [/= lA".
    apply deterministic_lio_reduce_l_multi0 with (l := l) (c := c) (t0 := t) (n := n).
-   assumption. assumption. assumption. assumption. assumption. assumption. 
+   assumption. assumption. assumption. assumption. assumption. assumption.
    assumption. eauto.
-   simpl. rewrite <- Heqb. 
+   simpl. rewrite <- Heqb.
    assumption.
-   simpl. rewrite <- Heqb. 
+   simpl. rewrite <- Heqb.
    assumption.
 Qed.
 
@@ -3464,7 +3329,7 @@ Proof.
   simpl. remember (canFlowTo l1 l === Some true). destruct b.
   Case "l1 [= l". rewrite H1. reflexivity.
   Case "l1 [/= l". reflexivity.
-Qed.  
+Qed.
 
 Definition safe_config (cfg : m) : Prop :=
   match cfg with
@@ -3514,7 +3379,7 @@ Proof.
   remember (canFlowTo lv1 l === Some true). destruct b.
   SCase "lv1 [= l". remember (canFlowTo lv2 l === Some true). destruct b.
   SSCase "lv2 [= l".  inversion H20.
-  rewrite Hrwrt_lv1 in H23. rewrite Hrwrt_lv2 in H23. 
+  rewrite Hrwrt_lv1 in H23. rewrite Hrwrt_lv2 in H23.
   subst lv1.
   rewrite erase_label_id in H24.
   rewrite <- Heqb in H24.
@@ -3527,14 +3392,14 @@ Proof.
   rewrite Hrwrt_lv2 in H23. subst lv1.
   rewrite <- Heqb0 in Heqb.
   solve by inversion.
-  SCase "lv1 [/= l". remember (canFlowTo lv2 l === Some true). destruct b. 
+  SCase "lv1 [/= l". remember (canFlowTo lv2 l === Some true). destruct b.
   SSCase "lv2 [= l". inversion H20.
   rewrite Hrwrt_lv1 in H23.
   rewrite Hrwrt_lv2 in H23. subst lv1.
   rewrite <- Heqb0 in Heqb.
   solve by inversion.
   SSCase "lv2 [/= l".  inversion H20.
-  rewrite Hrwrt_lv1 in H23. rewrite Hrwrt_lv2 in H23. 
+  rewrite Hrwrt_lv1 in H23. rewrite Hrwrt_lv2 in H23.
   subst lv1.
   rewrite erase_label_id in H24.
   rewrite <- Heqb in H24.
@@ -3547,19 +3412,19 @@ Proof.
   apply deterministic_lio_reduce_l_multi' with (l := l1) (c := c1) (t0 := t_App f (t_VLabeled b2 lv2 tv2)) (n := n).
   assumption. assumption. assumption. assumption.
   assumption. assumption. assumption.
-  assumption. 
+  assumption.
   assumption.
   apply GtT_app with (T1 := T_TLabeled T).
-  assumption. 
+  assumption.
   apply GtT_labeledVal.
-  assumption. assumption. 
+  assumption. assumption.
   apply GtT_lioVal.
-  assumption. assumption. assumption. 
+  assumption. assumption. assumption.
   assumption. assumption. assumption.
   apply GtT_app with (T1 := T_TLabeled T).
-  assumption. 
+  assumption.
   apply GtT_labeledVal.
-  assumption. assumption. 
+  assumption. assumption.
   apply GtT_lioVal.
   assumption. assumption.
   assumption. assumption.
@@ -3617,7 +3482,7 @@ Lemma current_clearance_monotonicity : forall l1 c1 t1 n l2 c2 t2,
   lio_reduce (m_Config l1 c1 t1) n (m_Config l2 c2 t2) ->
   c2 [= c1.
 Proof.
-  intros.  
+  intros.
   generalize dependent t2.
   generalize dependent c2.
   generalize dependent l2.
@@ -3630,13 +3495,13 @@ Proof.
   inversion H16. subst.
   apply IHt1_1 in H20. assumption.
   assumption. assumption. assumption. assumption.
-  subst. 
+  subst.
   apply canFlowTo_reflexive. assumption.
   subst.
   inversion H16. subst.
   apply IHt1_1 in H20. assumption.
   assumption. assumption. assumption. assumption.
-  subst. 
+  subst.
   apply canFlowTo_reflexive. assumption.
   Case "term_LowerClr". subst.
   admit (* H16: c2 c1 ~> true *).
@@ -3644,7 +3509,7 @@ Proof.
   inversion H16. subst.
   apply IHt1_1 in H20. assumption.
   assumption. assumption. assumption. assumption.
-  subst. 
+  subst.
   apply canFlowTo_reflexive. assumption.
   subst.
   inversion H16. subst.
