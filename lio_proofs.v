@@ -885,47 +885,27 @@ Lemma t_subst_label_id : forall x t l,
 Proof.
   intros.  induction l; auto; inversion H.
 Qed.
-  Ltac go :=
-    repeat try first [ repeat auto; simpl; inversion IHt1_1; reflexivity].
+
 Lemma erase_term_idempotent : forall l t1,
-  is_l_of_t l ->
-  erase_term l t1 = erase_term l (erase_term l t1).
+    is_l_of_t l ->
+    erase_term l t1 = erase_term l (erase_term l t1).
 Proof.
+  Ltac rewrite_equals :=
+    repeat match goal with
+           | [ H : _ = _ |- _ ] => rewrite <- H
+           | _ => reflexivity
+           end.
   intros l t1 H.
-  term_cases (induction t1) Case; eauto.
-  Case "term_VAbs". simpl. rewrite <- IHt1. reflexivity.
-  Case "term_VLIO". simpl. rewrite <- IHt1. reflexivity.
+  term_cases (induction t1) Case; eauto; simpl; rewrite_equals.
   Case "term_VLabeled".
   induction l; try contradiction;
     (destruct t1_1; simpl;
      repeat try solve [ simpl; inversion IHt1_1; reflexivity
-                      | rewrite <- IHt1_2; reflexivity
+                      | rewrite_equals
                       | repeat auto ]).
-  Case "term_App". simpl. rewrite <- IHt1_1. rewrite <- IHt1_2. reflexivity.
-  Case "term_Fix". simpl. rewrite <- IHt1. reflexivity.
-  Case "term_IfEl". simpl. rewrite <- IHt1_1. rewrite <- IHt1_2. rewrite <- IHt1_3. reflexivity.
-  Case "term_Join". simpl. rewrite <- IHt1_1. rewrite <- IHt1_2. reflexivity.
-  Case "term_Meet". simpl. rewrite <- IHt1_1. rewrite <- IHt1_2. reflexivity.
-  Case "term_CanFlowTo". simpl. rewrite <- IHt1_1. rewrite <- IHt1_2. reflexivity.
-  Case "term_Return". simpl. rewrite <- IHt1. reflexivity.
-  Case "term_Bind". simpl. rewrite <- IHt1_1. rewrite <- IHt1_2. reflexivity.
-  Case "term_LabelOf". simpl. rewrite <- IHt1. reflexivity.
   Case "term_Label".
-  simpl. rewrite <- IHt1_1. remember (canFlowTo (erase_term l t1_1) l === Some true).
-  destruct b.
-  SCase "t1_1 [= l".
-  rewrite <- IHt1_2. reflexivity.
-  SCase "t1_1 [/= l". reflexivity.
-  Case "term_UnLabel". simpl. rewrite <- IHt1. reflexivity.
-  Case "term_ToLabeled".
-  simpl. rewrite <- IHt1_1.
-  rewrite <- IHt1_2. reflexivity.
-  Case "term_LowerClr". simpl.
-  rewrite <- IHt1.  reflexivity.
-  Case "term_ThrowLIO". simpl.
-  rewrite <- IHt1.  reflexivity.
-  Case "term_CatchLIO". simpl.
-  rewrite <- IHt1_1. rewrite <- IHt1_2.  reflexivity.
+  remember (canFlowTo (erase_term l t1_1) l === Some true).
+  destruct b; rewrite_equals.
 Qed.
 
 Hint Resolve erase_term_idempotent.
