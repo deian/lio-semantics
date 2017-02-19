@@ -886,17 +886,20 @@ Proof.
   intros.  induction l; auto; inversion H.
 Qed.
 
+Ltac rewrite_equals :=
+  simpl;
+  repeat match goal with
+         | [ H : _ = _ |- _ ] => rewrite <- H
+         | [ H : forall _, _ = _ |- _ ] => rewrite <- H
+         | _ => reflexivity
+         end.
+
 Lemma erase_term_idempotent : forall l t1,
     is_l_of_t l ->
     erase_term l t1 = erase_term l (erase_term l t1).
 Proof.
-  Ltac rewrite_equals :=
-    repeat match goal with
-           | [ H : _ = _ |- _ ] => rewrite <- H
-           | _ => reflexivity
-           end.
   intros l t1 H.
-  term_cases (induction t1) Case; eauto; simpl; rewrite_equals.
+  term_cases (induction t1) Case; eauto; rewrite_equals.
   Case "term_VLabeled".
   induction l; try contradiction;
     (destruct t1_1; simpl;
@@ -946,9 +949,7 @@ Lemma erase_term_homo_subst : forall l t1 x t2,
 Proof.
   intros l t1 x t2 l_of_t.
   generalize dependent t1.
-  term_cases (induction t2) Case; intros t1; eauto.
-  Case "term_VAbs". simpl. rewrite IHt2. reflexivity.
-  Case "term_VLIO". simpl. rewrite IHt2. reflexivity.
+  term_cases (induction t2) Case; intros t1; eauto; rewrite_equals.
   Case "term_VLabeled". simpl.
     rewrite tsubst_t_homo_if'.
     simpl.
@@ -963,15 +964,6 @@ Proof.
             if eq_termvar x0 x then erase_term l t1 else erase_term l (t_Var x0)) as Hr.
     SCase "asert". destruct (eq_termvar x0 x); auto.
     rewrite Hr. simpl. reflexivity.
-  Case "term_App". simpl. rewrite IHt2_1. rewrite IHt2_2. reflexivity.
-  Case "term_Fix". simpl. rewrite IHt2. reflexivity.
-  Case "term_IfEl". simpl. rewrite IHt2_1. rewrite IHt2_2. rewrite IHt2_3. reflexivity.
-  Case "term_Join". simpl. rewrite IHt2_1. rewrite IHt2_2. reflexivity.
-  Case "term_Meet". simpl. rewrite IHt2_1. rewrite IHt2_2. reflexivity.
-  Case "term_CanFlowTo".  simpl. rewrite IHt2_1. rewrite IHt2_2. reflexivity.
-  Case "term_Return". simpl. rewrite IHt2. reflexivity.
-  Case "term_Bind". simpl. rewrite IHt2_1. rewrite IHt2_2. reflexivity.
-  Case "term_LabelOf". simpl. rewrite IHt2. reflexivity.
   Case "term_Label". simpl.
     rewrite tsubst_t_homo_if'.
     simpl.
@@ -980,12 +972,6 @@ Proof.
     SCase "assertion". rewrite t_subst_label_id. reflexivity. assumption.
     rewrite -> Hrwrt.
     reflexivity.
-  Case "term_UnLabel". simpl. rewrite IHt2. reflexivity.
-  Case "term_ToLabeled". simpl.
-    rewrite IHt2_1. rewrite IHt2_2. reflexivity.
-  Case "term_LowerClr". simpl. rewrite IHt2. reflexivity.
-  Case "term_ThrowLIO". simpl. rewrite IHt2. reflexivity.
-  Case "term_CatchLIO". simpl. rewrite IHt2_1. rewrite IHt2_2. reflexivity.
 Qed.
 
 Hint Resolve erase_term_homo_subst.
