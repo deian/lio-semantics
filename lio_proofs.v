@@ -889,8 +889,8 @@ Qed.
 Ltac rewrite_equals :=
   simpl;
   repeat match goal with
-         | [ H : _ = _ |- _ ] => rewrite <- H
-         | [ H : forall _, _ = _ |- _ ] => rewrite <- H
+         | [ H : _ = _ |- _ = _ ] => rewrite <- H
+         | [ H : forall _, _ = _ |- _ = _ ] => rewrite <- H
          | _ => reflexivity
          end.
 
